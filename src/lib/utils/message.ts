@@ -3,13 +3,14 @@ import { bots } from '#lib/data';
 import bumps from '#models/bumps';
 import guilds from '#models/guilds';
 
-const DEVS: string[] = ['481344295354368020'];
+// Administrator, Manage Channels, Manage Server, Manage Roles, Manage Webhooks
+const MANAGER_PERMISSIONS = [8n, 16n, 32n, 268435456n, 536870912n];
 
-export const bumpMessage = async ({ author, createdAt, interaction, embeds, guildId }: Message) => {
-  if (!interaction && !DEVS.includes(author.id)) return;
+export const bumpMessage = async ({ author, createdAt, interaction, embeds, guildId, member }: Message) => {
+  if ((!member && !interaction) || (!interaction && !member?.permissions.any(MANAGER_PERMISSIONS))) return;
 
   const guild_DB = await guilds.findOne({ guildId });
-  if (!guild_DB && DEVS.includes(author.id)) await guilds.create({ guildId });
+  if (!guild_DB && member?.permissions.any(MANAGER_PERMISSIONS)) await guilds.create({ guildId });
   else if (!guild_DB) return null;
 
   const bot = bots.find(bot => bot.clientId === author.id);

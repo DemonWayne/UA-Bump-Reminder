@@ -1,6 +1,6 @@
 {
   "name": "ua-bump-reminder",
-  "version": "0.6.0",
+  "version": "0.6.2",
   "description": "bump reminder ua",
   "main": "dist/index.js",
   "scripts": {
