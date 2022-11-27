@@ -1,4 +1,5 @@
 import type { ColorResolvable, EmojiResolvable, Snowflake } from 'discord.js';
+import type { LocalizationMap } from 'discord-api-types/v10';
 
 export interface Bot {
   // Client / Bot ID
@@ -15,4 +16,10 @@ export interface Bot {
   readonly successColor?: ColorResolvable;
   // Success Embed Text
   readonly successText?: string;
+}
+
+export interface APIApplicationCommandOptionChoice<ValueType = string | number> {
+  name: string;
+  name_localizations?: LocalizationMap | null;
+  value: ValueType;
 }

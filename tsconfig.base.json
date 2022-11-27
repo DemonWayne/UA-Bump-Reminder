@@ -4,5 +4,5 @@
     "target": "ESNext",
 	"removeComments": true
   },
-  "include": ["src", "src/**/*.ts"]
+  "include": ["src"]
 }

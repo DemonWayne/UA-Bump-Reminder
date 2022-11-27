@@ -31,14 +31,14 @@ export const bots: Array<Bot> = [
     emoji: '<:ServerMonitoring:1044773789407383582>',
     successColor: 4437378,
   },
-  // Bumper Нагадувач
-  {
-    clientId: '1045683985394704385',
-    name: 'Bumper Нагадувач',
-    commandName: 'bump',
-    // 30s
-    bumpCoolDown: 30 * 1000,
-    emoji: '<:bumper:1045759103156363334>',
-    successColor: 3330168,
-  },
+  // Bumper Нагадувач (Test bot)
+  // {
+  //   clientId: '1045683985394704385',
+  //   name: 'Bumper Нагадувач',
+  //   commandName: 'bump',
+  //   // 30s
+  //   bumpCoolDown: 3 * 60 * 1000,
+  //   emoji: '<:bumper:1045759103156363334>',
+  //   successColor: 3330168,
+  // },
 ];

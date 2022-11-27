@@ -1,15 +1,11 @@
-import { Client, Role } from 'discord.js';
-import type { ClientOptions } from 'discord.js';
+import type { Role } from 'discord.js';
+import { SapphireClient } from '@sapphire/framework';
 import { bots } from './data';
 import bumpsModel from '#models/bumps';
 import { connect } from 'mongoose';
 import guilds from '#models/guilds';
 
-export class AdvancedClient extends Client {
-  public constructor(clientOptions: ClientOptions) {
-    super(clientOptions);
-  }
-
+export class AdvancedClient extends SapphireClient {
   public login() {
     this.connectDatabase();
     return super.login();

@@ -1,5 +1,5 @@
 {
-  "extends": "@sapphire/ts-config",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "allowJs": true,
     "outDir": "../dist",
