@@ -7,7 +7,7 @@ import guilds from '#models/guilds';
 
 export class AdvancedClient extends SapphireClient {
   public login() {
-    console.info(`Бот почав запускатися!`);
+    this.logger.info(`Бот почав запускатися!`);
     this.connectDatabase();
     return super.login();
   }
@@ -41,7 +41,7 @@ export class AdvancedClient extends SapphireClient {
             bot.emoji ? `${bot.emoji}` : `<@${bump.clientId}>`
           } \`/${bump.commandName}\``,
         })
-        .catch(err => console.error(err));
+        .catch(err => this.logger.error(err));
 
       await bump.delete();
     }
@@ -51,7 +51,7 @@ export class AdvancedClient extends SapphireClient {
     if (!process.env?.DATABASE_URL) throw new Error('Не вказано посилання на базу даних');
     connect(process.env.DATABASE_URL, {}, err => {
       if (err) throw err;
-      else console.info('[Database] MongoDB successfully connected.');
+      else this.logger.info('[Database] MongoDB successfully connected.');
     });
   }
 }

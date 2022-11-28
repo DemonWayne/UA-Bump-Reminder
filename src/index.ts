@@ -8,4 +8,4 @@ const client = new AdvancedClient({
   partials: ['CHANNEL', 'MESSAGE', 'USER'],
 });
 
-client.login().catch((err: Error) => console.error(err));
+client.login().catch((err: Error) => client.logger.fatal(err));
