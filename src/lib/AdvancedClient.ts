@@ -7,6 +7,7 @@ import guilds from '#models/guilds';
 
 export class AdvancedClient extends SapphireClient {
   public login() {
+    console.info(`Бот почав запускатися!`);
     this.connectDatabase();
     return super.login();
   }
@@ -21,7 +22,7 @@ export class AdvancedClient extends SapphireClient {
         return;
       }
 
-      const bot = bots.find(bt => bt.clientId === bump.clientId);
+      const bot = bots.find(({ clientId }) => clientId === bump.clientId);
       if (!bot) return;
 
       const guild_DB = await guilds.findOne({ guildId: guild.id });
