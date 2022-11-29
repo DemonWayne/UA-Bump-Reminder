@@ -40,6 +40,13 @@ export default class UserCommand extends Command {
 
     const bot = bots.find(bot => bot.clientId === botId);
 
+    if (botId && !botsInfo.find(botInfo => botInfo.id === botId)) {
+      return interaction.reply({
+        embeds: [new MessageEmbed({ color: 0xc95942, description: 'Бот відсутній на сервері!' })],
+        ephemeral: true,
+      });
+    }
+
     if (!bumpsInfo || (bumpsInfo instanceof Array && !bumpsInfo.length)) {
       return interaction.reply({
         embeds: [

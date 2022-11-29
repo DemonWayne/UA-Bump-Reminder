@@ -2,15 +2,17 @@ import { Schema, model } from 'mongoose';
 
 interface iGuild {
   guildId: string;
-  bumpChannel: string;
+  bumpChannels: string[];
   bumpRoles: string[];
+  bumpUsers: string[];
 }
 
 const guildSchema = new Schema<iGuild>(
   {
     guildId: { type: String, required: true, unique: true },
-    bumpChannel: { type: String, default: 'Не вказаний' },
+    bumpChannels: { type: [String], default: [] },
     bumpRoles: { type: [String], default: [] },
+    bumpUsers: { type: [String], default: [] },
   },
   { versionKey: false },
 );

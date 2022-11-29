@@ -28,20 +28,35 @@ export class AdvancedClient extends SapphireClient {
       const guild_DB = await guilds.findOne({ guildId: guild.id });
       if (!guild_DB) return;
 
-      const bumpChannel = guild.channels.cache.get(guild_DB.bumpChannel);
-      if (!bumpChannel || bumpChannel.type !== 'GUILD_TEXT') return;
+      const bumpChannels = guild_DB.bumpChannels
+        .map((id: string) => guild.channels.cache.get(id))
+        .filter(bumpChannel => bumpChannel && bumpChannel.type === 'GUILD_TEXT');
+      if (!bumpChannels.length) return;
 
       const bumpRoles = guild_DB.bumpRoles
         .map(role => guild.roles.cache.get(role))
         .filter((role): role is Role => Boolean(role));
 
-      bumpChannel
-        .send({
-          content: `${bumpRoles.map(r => r).join(' ')} прийшов час бампу! ${
-            bot.emoji ? `${bot.emoji}` : `<@${bump.clientId}>`
-          } \`/${bump.commandName}\``,
-        })
-        .catch(err => this.logger.error(err));
+      const bumpUsers = guild_DB.bumpUsers.map(user => `<@${user}>`);
+
+      for (const bumpChannel of bumpChannels) {
+        if (!bumpChannel || bumpChannel.type !== 'GUILD_TEXT') continue;
+
+        const rolesForMention = bumpRoles.filter(
+          role =>
+            bumpChannel.permissionsFor(guild.id)?.has('VIEW_CHANNEL') ||
+            role.permissions.has(8n) ||
+            bumpChannel.permissionsFor(role).has('VIEW_CHANNEL'),
+        );
+
+        bumpChannel
+          .send({
+            content: `${rolesForMention.map(r => r).join(' ')} ${bumpUsers.join(' ')} прийшов час бампу! ${
+              bot.emoji ? `${bot.emoji}` : `<@${bump.clientId}>`
+            } \`/${bump.commandName}\``,
+          })
+          .catch(err => this.logger.error(err));
+      }
 
       await bump.delete();
     }
