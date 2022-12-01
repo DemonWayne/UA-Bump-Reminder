@@ -37,18 +37,28 @@ export class UserCommand extends Command {
 
     const isRole = mention instanceof Role;
     const isMember = mention instanceof GuildMember;
-    if (!mention || (!isRole && !isMember)) return interaction.reply({ content: 'Mention error', ephemeral: true });
+    if (!mention || (!isRole && !isMember)) {
+      return interaction.reply({
+        embeds: [
+          this.errorEmbed(
+            `Сталася помилка! Невдалося отримати ${isRole ? 'роль яку' : 'користувача якого'} Ви вказали.`,
+            '🚫',
+          ),
+        ],
+        ephemeral: true,
+      });
+    }
 
     let guild_DB = await guilds.findOne({ guildId: interaction.guildId }).exec();
     if (!guild_DB) guild_DB = await guilds.create({ guildId: interaction.guildId });
     if (!guild_DB.bumpRoles || !(guild_DB.bumpRoles instanceof Array)) {
       return interaction.reply({
-        content: 'Сталася помилка! Код помилки: 1\nЗверніться до розробника!',
+        embeds: [this.errorEmbed(`Сталася помилка!\nПомилка: bumpRoles is not Array\nЗверніться до розробника!`)],
         ephemeral: true,
       });
     } else if (!guild_DB.bumpUsers || !(guild_DB.bumpUsers instanceof Array)) {
       return interaction.reply({
-        content: 'Сталася помилка! Код помилки: 1\nЗверніться до розробника!',
+        embeds: [this.errorEmbed(`Сталася помилка!\nПомилка: bumpUsers is not Array\nЗверніться до розробника!`)],
         ephemeral: true,
       });
     }
@@ -59,12 +69,16 @@ export class UserCommand extends Command {
         (isMember && guild_DB.bumpUsers.includes(mention.id))
       ) {
         return interaction.reply({
-          content: `Ц${mention instanceof Role ? 'я роль' : 'ей користувач'} вже є у переліку.`,
+          embeds: [this.errorEmbed(`Ц${mention instanceof Role ? 'я роль' : 'ей користувач'} вже є у переліку.`)],
           ephemeral: true,
         });
       } else if ((isRole && guild_DB.bumpRoles.length >= 15) || (isMember && guild_DB.bumpUsers.length >= 15)) {
         return interaction.reply({
-          content: `Сталася помилка! Ви можете додати лише 15 ${isRole ? 'ролей' : 'користувачів'} до переліку.`,
+          embeds: [
+            this.errorEmbed(
+              `Сталася помилка! Ви можете додати лише 15 ${isRole ? 'ролей' : 'користувачів'} до переліку.`,
+            ),
+          ],
           ephemeral: true,
         });
       }
@@ -80,7 +94,7 @@ export class UserCommand extends Command {
 
       if (i < 0) {
         return interaction.reply({
-          content: `${isRole ? 'роль яку' : 'користувача якого'} Ви згадали не знайдено у переліку.`,
+          embeds: [this.errorEmbed(`${isRole ? 'роль яку' : 'користувача якого'} Ви згадали не знайдено у переліку.`)],
           ephemeral: true,
         });
       }
@@ -104,5 +118,9 @@ export class UserCommand extends Command {
       ],
       ephemeral: true,
     });
+  }
+
+  private errorEmbed(content: string, emoji = '📛') {
+    return new MessageEmbed({ color: 0xc95942, title: `${emoji} | Помилка`, description: content });
   }
 }

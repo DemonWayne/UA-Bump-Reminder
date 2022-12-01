@@ -33,10 +33,10 @@ export class UserCommand extends Command {
     const action = interaction.options.getString('дія');
     const channel = interaction.options.getChannel('канал');
     if (!channel || channel.type !== 'GUILD_TEXT') {
-      return interaction.reply({ content: 'Треба вказати текстовий канал!', ephemeral: true });
+      return interaction.reply({ embeds: [this.errorEmbed('Треба вказати текстовий канал!', '❌')], ephemeral: true });
     } else if (!channel.viewable && action === 'add') {
       return interaction.reply({
-        content: 'Нажаль в мене немає доступу до цього каналу, вкажіть інший канал.',
+        embeds: [this.errorEmbed('Нажаль в мене немає доступу до цього каналу, вкажіть інший канал.', '📛')],
         ephemeral: true,
       });
     }
@@ -44,15 +44,18 @@ export class UserCommand extends Command {
     let guild_DB = await guilds.findOne({ guildId: interaction.guildId }).exec();
     if (!guild_DB) guild_DB = await guilds.create({ guildId: interaction.guildId });
     if (!guild_DB.bumpChannels || !(guild_DB.bumpChannels instanceof Array)) {
-      return interaction.reply({ content: 'Сталася помилка! Зверніться до розробника!', ephemeral: true });
+      return interaction.reply({
+        embeds: [this.errorEmbed('Сталася помилка! Зверніться до розробника!', '⛔')],
+        ephemeral: true,
+      });
     }
 
     if (action === 'add') {
       if (guild_DB.bumpChannels.includes(channel.id)) {
-        return interaction.reply({ content: 'Цей канал вже є у переліку.', ephemeral: true });
+        return interaction.reply({ embeds: [this.errorEmbed('Цей канал вже є у переліку.')], ephemeral: true });
       } else if (guild_DB.bumpChannels.length >= 10) {
         return interaction.reply({
-          content: 'Сталася помилка! Ви можете додати лише 10 каналів до переліку.',
+          embeds: [this.errorEmbed('Сталася помилка! Ви можете додати лише 10 каналів до переліку.')],
           ephemeral: true,
         });
       }
@@ -61,7 +64,10 @@ export class UserCommand extends Command {
     } else {
       const i = guild_DB.bumpChannels.findIndex((bumpChannel: string) => bumpChannel === channel.id);
       if (i < 0) {
-        return interaction.reply({ content: 'Канал котрий ви вказали не знайден у переліку.', ephemeral: true });
+        return interaction.reply({
+          embeds: [this.errorEmbed('Канал котрий ви вказали не знайден у переліку.')],
+          ephemeral: true,
+        });
       }
 
       guild_DB.bumpChannels.splice(i, 1);
@@ -81,5 +87,9 @@ export class UserCommand extends Command {
       ],
       ephemeral: true,
     });
+  }
+
+  private errorEmbed(content: string, emoji = '🚫') {
+    return new MessageEmbed({ color: 0xc95942, title: `${emoji} | Помилка`, description: content });
   }
 }
