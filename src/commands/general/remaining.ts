@@ -1,8 +1,8 @@
 import { ChatInputCommand, Command } from '@sapphire/framework';
 import { type GuildMember, MessageEmbed } from 'discord.js';
+import { formattingTime, toUnixTimestamp } from '#utils/formatter';
 import { bots } from '#lib/data';
 import bumps from '#models/bumps';
-import { formattingTime } from '#utils/formatter';
 
 export default class UserCommand extends Command {
   public override registerApplicationCommands(registry: ChatInputCommand.Registry) {
@@ -39,6 +39,13 @@ export default class UserCommand extends Command {
       : await bumps.find({ guildId: interaction.guildId }).exec();
 
     const bot = bots.find(bot => bot.clientId === botId);
+
+    if (botId && !botsInfo.find(botInfo => botInfo.id === botId)) {
+      return interaction.reply({
+        embeds: [new MessageEmbed({ color: 0xc95942, description: 'Бот відсутній на сервері!' })],
+        ephemeral: true,
+      });
+    }
 
     if (!bumpsInfo || (bumpsInfo instanceof Array && !bumpsInfo.length)) {
       return interaction.reply({
@@ -78,18 +85,18 @@ export default class UserCommand extends Command {
                       bumpBot?.commandName
                     }\`: **${
                       bump
-                        ? `${formattingTime(bump.nextUse.getTime() - new Date().getTime())} <t:${(
-                            bump.nextUse.getTime() / 1000
-                          ).toFixed(0)}:T>`
+                        ? `${formattingTime(bump.nextUse.getTime() - new Date().getTime())} <t:${toUnixTimestamp(
+                            bump.nextUse,
+                          )}:T>`
                         : 'Немає інформації щодо наступного бампу'
                     }**`;
                   })
                   .join('\n')}`
               : `у:\n${bot && bot.emoji ? bot.emoji : `<@${bumpsInfo.clientId}>`} \`/${
                   bumpsInfo.commandName
-                }\`: **${formattingTime(bumpsInfo.nextUse.getTime() - new Date().getTime())} <t:${(
-                  bumpsInfo.nextUse.getTime() / 1000
-                ).toFixed(0)}:T>**`
+                }\`: **${formattingTime(bumpsInfo.nextUse.getTime() - new Date().getTime())} <t:${toUnixTimestamp(
+                  bumpsInfo.nextUse,
+                )}:T>**`
           }`,
         }),
       ],
