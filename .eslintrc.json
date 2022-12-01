@@ -1,0 +1,13 @@
+{
+  "extends": "@sapphire",
+  "rules": {
+  	"@typescript-eslint/no-base-to-string": 0,
+	"@typescript-eslint/no-throw-literal": 0,
+	"quotes": ["error", "single", { "avoidEscape": true, "allowTemplateLiterals": true }],
+	"sort-imports": ["error"],
+	"no-warning-comments": ["warn", { "terms": ["todo", "fixme", "error", "deprecated"] }]
+  },
+  "parserOptions": {
+	"warnOnUnsupportedTypeScriptVersion": false
+  }
+}
