@@ -29,3 +29,7 @@ export const formattingTime = (duration: number) => {
   }
   return str.trim();
 };
+
+export const toUnixTimestamp = (date: Date) => {
+  return (date.getTime() / 1000).toFixed(0);
+};
